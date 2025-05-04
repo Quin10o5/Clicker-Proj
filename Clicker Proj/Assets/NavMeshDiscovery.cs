@@ -23,7 +23,7 @@ public class NavMeshDiscovery : MonoBehaviour
     void Start()
     {
         _t       = transform;
-        _chunker = FindObjectOfType<NavMeshKnowledge>();
+        _chunker = GetComponent<NavMeshKnowledge>();
         StartCoroutine(FOVRoutine());
     }
 

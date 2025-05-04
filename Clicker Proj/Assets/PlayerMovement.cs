@@ -3,8 +3,17 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public float movementModEffectSpeed = 10f;
+    public bool crouched;
+    [Range(0,1)]
+    public float crouchSpeedMod = .5f;
+    public bool sprinting;
+    [Range(1,3)]
+    public float sprintSpeedMod = 2f;
     [Header("Movement Settings")]
-    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float baseMoveSpeed = 10f;
+    [SerializeField] private float desiredMoveSpeed;
+    [SerializeField] private float moveSpeed;
     [SerializeField] private float accelerationDuration = 1f;      // Time (in seconds) to ease from 0 → full speed
     [SerializeField] private AnimationCurve movementEaseCurve;     // Curve should go from 0 → 1
 
@@ -30,9 +39,28 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKey(KeyCode.LeftShift)) sprinting = true;
+        else sprinting = false;
+        if(Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.C)) crouched = !crouched;
+        UpdateSprinting();
         HandleInput();
         SpeedControl();
+        moveSpeed = Mathf.Lerp(moveSpeed, desiredMoveSpeed, Time.deltaTime * movementModEffectSpeed);
+        
     }
+
+    void UpdateSprinting()
+    {
+        if(sprinting) desiredMoveSpeed = baseMoveSpeed * sprintSpeedMod;
+        else desiredMoveSpeed = baseMoveSpeed;
+        UpdateCrouching();
+    }
+    void UpdateCrouching()
+    {
+        if(crouched) desiredMoveSpeed *= crouchSpeedMod;
+    }
+    
+    
 
     void SpeedControl()
     {

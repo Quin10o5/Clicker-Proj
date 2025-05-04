@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class NavChunk
 {
     public Vector2Int coord;       // (x, z) indices
+    public float      interest;    // for pathfinding targets
     public float      lastVisited; // Time.time when last visited
     public float      lastSeen;    // Time.time when last seen
     public Vector3    worldCenter; // for pathfinding targets
@@ -15,7 +16,10 @@ public class NavMeshKnowledge : MonoBehaviour
 {
     [Header("Grid Settings")]
     public float   cellSize    = 5f;
-    public Vector2 gridOrigin  = Vector2.zero;
+    public bool useSetGridPos = false;
+    public Vector2 setGridOrigin  = Vector2.zero;
+    [HideInInspector]
+    public Vector2 gridOrigin;
     public int     gridWidth   = 20;
     public int     gridHeight  = 20;
 
@@ -27,6 +31,23 @@ public class NavMeshKnowledge : MonoBehaviour
 
     void Awake()
     {
+        // ─────────────── gridOrigin ───────────────
+        if (useSetGridPos)
+        {
+            // manual bottom‐left origin
+            gridOrigin = setGridOrigin;
+        }
+        else
+        {
+            // center the grid on this Transform
+            float halfW = gridWidth  * cellSize * 0.5f;
+            float halfH = gridHeight * cellSize * 0.5f;
+            Vector3 p  = transform.position;
+            // bottom‐left corner so centre is at p
+            gridOrigin = new Vector2(p.x - halfW, p.z - halfH);
+        }
+
+        // ─────────────── build chunks ───────────────
         _chunks = new Dictionary<Vector2Int, NavChunk>(gridWidth * gridHeight);
         for (int x = 0; x < gridWidth; x++)
         for (int z = 0; z < gridHeight; z++)
@@ -45,12 +66,14 @@ public class NavMeshKnowledge : MonoBehaviour
                     coord        = coord,
                     worldCenter  = hit.position,
                     lastVisited  = float.NegativeInfinity,
-                    lastSeen     = float.NegativeInfinity
+                    lastSeen     = float.NegativeInfinity,
+                    interest     = -1
                 };
                 _chunks.Add(coord, chunk);
             }
         }
     }
+
 
     public void MarkVisited(Vector3 worldPos)
     {

@@ -146,7 +146,7 @@ Transform:
   m_GameObject: {fileID: 44806828}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 33.43, y: 3, z: 20.75}
+  m_LocalPosition: {x: 33.43, y: 1.98, z: 21.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -162,8 +162,8 @@ Rigidbody:
   m_GameObject: {fileID: 44806828}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 0.3
+  m_AngularDrag: 0.1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -192,28 +192,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ccf4110303b39b4ba8396348324e44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementModEffectSpeed: 5
+  crouched: 0
+  crouchSpeedMod: 0.5
+  sprinting: 0
+  sprintSpeedMod: 1.5
+  baseMoveSpeed: 2
+  desiredMoveSpeed: 0
   moveSpeed: 3
   accelerationDuration: 2
   movementEaseCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0015983582
-      value: 0.20349121
-      inSlope: 0.565129
-      outSlope: 0.565129
+      time: 0
+      value: 0.3466797
+      inSlope: 0.29906607
+      outSlope: 0.29906607
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.059296418
+      outWeight: 0.08147052
     - serializedVersion: 3
       time: 1
       value: 0.9946461
-      inSlope: -0.090095885
-      outSlope: -0.090095885
+      inSlope: 0.08026163
+      outSlope: 0.08026163
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.10416647
+      inWeight: 0.07987201
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -232,6 +239,7 @@ GameObject:
   - component: {fileID: 46714338}
   - component: {fileID: 46714337}
   - component: {fileID: 46714336}
+  - component: {fileID: 46714340}
   m_Layer: 0
   m_Name: Cube (8)
   m_TagString: Untagged
@@ -328,6 +336,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &46714340
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 46714335}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &145706583
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,7 +548,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2534013, y: -0.000000021923167, z: 0.0000000057427973, w: 0.9673613}
-  m_LocalPosition: {x: 33.43, y: 5.25, z: 16.75}
+  m_LocalPosition: {x: 33.43, y: 4.23, z: 17.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -739,6 +763,7 @@ GameObject:
   - component: {fileID: 535058194}
   - component: {fileID: 535058193}
   - component: {fileID: 535058192}
+  - component: {fileID: 535058196}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -835,6 +860,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &535058196
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535058191}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &565388350
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,6 +888,7 @@ GameObject:
   - component: {fileID: 565388353}
   - component: {fileID: 565388352}
   - component: {fileID: 565388351}
+  - component: {fileID: 565388355}
   m_Layer: 0
   m_Name: Cube (5)
   m_TagString: Untagged
@@ -943,6 +985,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &565388355
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565388350}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &638864594
 GameObject:
   m_ObjectHideFlags: 0
@@ -1079,7 +1137,7 @@ Transform:
   m_GameObject: {fileID: 649396645}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.12, y: -2.16, z: 1.52}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1175,6 +1233,7 @@ GameObject:
   - component: {fileID: 659427868}
   - component: {fileID: 659427867}
   - component: {fileID: 659427866}
+  - component: {fileID: 659427870}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -1271,6 +1330,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &659427870
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659427865}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &766530920
 GameObject:
   m_ObjectHideFlags: 0
@@ -1283,6 +1358,7 @@ GameObject:
   - component: {fileID: 766530923}
   - component: {fileID: 766530922}
   - component: {fileID: 766530921}
+  - component: {fileID: 766530925}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -1379,6 +1455,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &766530925
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766530920}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1549,6 +1641,7 @@ GameObject:
   - component: {fileID: 1299181859}
   - component: {fileID: 1299181858}
   - component: {fileID: 1299181857}
+  - component: {fileID: 1299181861}
   m_Layer: 0
   m_Name: Cube (6)
   m_TagString: Untagged
@@ -1645,6 +1738,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &1299181861
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299181856}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1332276129
 GameObject:
   m_ObjectHideFlags: 0
@@ -1657,6 +1766,7 @@ GameObject:
   - component: {fileID: 1332276132}
   - component: {fileID: 1332276131}
   - component: {fileID: 1332276130}
+  - component: {fileID: 1332276134}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -1748,61 +1858,27 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 34.61198, y: 1.8, z: 26.469978}
-  m_LocalScale: {x: 4.2451, y: 7.0845, z: 1}
+  m_LocalScale: {x: 4.2451, y: 7.0845, z: 3.2297}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1405165140
-GameObject:
+--- !u!208 &1332276134
+NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1405165142}
-  - component: {fileID: 1405165141}
-  m_Layer: 0
-  m_Name: Clicker Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1405165141
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1405165140}
+  m_GameObject: {fileID: 1332276129}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dafa31e42a1b954983a5f08ebb2cb19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cellSize: 2
-  gridOrigin: {x: 0, y: 0}
-  gridWidth: 20
-  gridHeight: 20
-  drawGizmos: 1
-  debugMaxTime: 15
---- !u!4 &1405165142
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1405165140}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.677206, y: 13.856679, z: 29.175432}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1517443939
 GameObject:
   m_ObjectHideFlags: 0
@@ -1815,6 +1891,7 @@ GameObject:
   - component: {fileID: 1517443942}
   - component: {fileID: 1517443941}
   - component: {fileID: 1517443940}
+  - component: {fileID: 1517443944}
   m_Layer: 0
   m_Name: Cube (7)
   m_TagString: Untagged
@@ -1911,6 +1988,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &1517443944
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1517443939}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1587743624
 GameObject:
   m_ObjectHideFlags: 0
@@ -2151,7 +2244,7 @@ Transform:
   m_GameObject: {fileID: 1587743624}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2534013, y: -0.000000021923169, z: 0.000000005742798, w: 0.9673613}
-  m_LocalPosition: {x: 33.43, y: 5.25, z: 16.75}
+  m_LocalPosition: {x: 33.43, y: 4.23, z: 17.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2212,6 +2305,7 @@ GameObject:
   - component: {fileID: 1699849189}
   - component: {fileID: 1699849188}
   - component: {fileID: 1699849187}
+  - component: {fileID: 1699849191}
   m_Layer: 0
   m_Name: Cube (4)
   m_TagString: Untagged
@@ -2308,6 +2402,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &1699849191
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1699849186}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1928387525
 GameObject:
   m_ObjectHideFlags: 0
@@ -2344,7 +2454,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_UseGeometry: 0
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -2416,6 +2526,7 @@ GameObject:
   - component: {fileID: 2073355297}
   - component: {fileID: 2073355296}
   - component: {fileID: 2073355295}
+  - component: {fileID: 2073355300}
   m_Layer: 7
   m_Name: Clicker
   m_TagString: Untagged
@@ -2528,13 +2639,33 @@ Transform:
   m_GameObject: {fileID: 2073355294}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 28.18, y: 0.98, z: 24.5}
+  m_LocalPosition: {x: 29.2, y: 0.98, z: 26.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 638864595}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2073355300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073355294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dafa31e42a1b954983a5f08ebb2cb19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSize: 2
+  useSetGridPos: 0
+  setGridOrigin: {x: 0, y: 0}
+  gridOrigin: {x: 0, y: 0}
+  gridWidth: 20
+  gridHeight: 20
+  drawGizmos: 1
+  debugMaxTime: 15
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2555,5 +2686,4 @@ SceneRoots:
   - {fileID: 1517443943}
   - {fileID: 46714339}
   - {fileID: 1928387527}
-  - {fileID: 1405165142}
   - {fileID: 2073355299}
