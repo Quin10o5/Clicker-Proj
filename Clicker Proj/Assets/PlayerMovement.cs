@@ -23,9 +23,12 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 moveDirection;
     private Rigidbody rb;
     private float accelTimer = 0f;
+    
+    private playerStealth stealth;
 
     private void Start()
     {
+        stealth = GetComponent<playerStealth>();
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
 
@@ -41,7 +44,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.LeftShift)) sprinting = true;
         else sprinting = false;
-        if(Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.C)) crouched = !crouched;
+        if(Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.C))
+        {
+            crouched = !crouched;
+            stealth.sneaking = crouched;
+        }
         UpdateSprinting();
         HandleInput();
         SpeedControl();
@@ -57,7 +64,11 @@ public class PlayerMovement : MonoBehaviour
     }
     void UpdateCrouching()
     {
-        if(crouched) desiredMoveSpeed *= crouchSpeedMod;
+        if(crouched)
+        {
+            desiredMoveSpeed *= crouchSpeedMod;
+            
+        }
     }
     
     

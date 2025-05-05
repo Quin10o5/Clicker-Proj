@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 44806829}
   - component: {fileID: 44806831}
   - component: {fileID: 44806832}
+  - component: {fileID: 44806833}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -227,6 +228,22 @@ MonoBehaviour:
     m_RotationOrder: 4
   Orientation: {fileID: 1976467129}
   moveDirection: {x: 0, y: 0, z: 0}
+--- !u!114 &44806833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44806828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14523721407f651428fc8ca319fb0ac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sneaking: 0
+  noiseLevel: 0
+  normalRayPos: {fileID: 0}
+  stealthRayPos: {fileID: 0}
 --- !u!1 &46714335
 GameObject:
   m_ObjectHideFlags: 0

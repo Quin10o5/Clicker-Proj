@@ -7,6 +7,7 @@ public class NavChunk
 {
     public Vector2Int coord;       // (x, z) indices
     public float      interest;    // for pathfinding targets
+    public float      lastPlayerSeen;     // true if last visited
     public float      lastVisited; // Time.time when last visited
     public float      lastSeen;    // Time.time when last seen
     public Vector3    worldCenter; // for pathfinding targets
@@ -67,7 +68,8 @@ public class NavMeshKnowledge : MonoBehaviour
                     worldCenter  = hit.position,
                     lastVisited  = float.NegativeInfinity,
                     lastSeen     = float.NegativeInfinity,
-                    interest     = -1
+                    interest     = -1,
+                    lastPlayerSeen = float.NegativeInfinity
                 };
                 _chunks.Add(coord, chunk);
             }
@@ -88,6 +90,23 @@ public class NavMeshKnowledge : MonoBehaviour
         }
     }
 
+    
+    /// <summary>
+    /// World→grid index, using the same origin & cellSize as NavMeshKnowledge.
+    /// </summary>
+    public Vector2Int WorldToChunkCoord(Vector3 worldPos)
+    {
+        float ox = gridOrigin.x;
+        float oz = gridOrigin.y;
+        float cs = cellSize;
+
+        int x = Mathf.FloorToInt((worldPos.x - ox) / cs);
+        int z = Mathf.FloorToInt((worldPos.z - oz) / cs);
+        return new Vector2Int(x, z);
+    }
+
+
+    
     public void MarkSeen(Vector3 worldPos)
     {
         var coord = new Vector2Int(
@@ -134,12 +153,19 @@ public class NavMeshKnowledge : MonoBehaviour
                        ? 1f
                        : Mathf.Clamp01(ageS / debugMaxTime);
             Color colS = Color.Lerp(Color.blue, Color.yellow, tS);
+            
+            // SEEN: magenta → yellow
+            float ageP = now - c.lastPlayerSeen;
+            float tP   = float.IsInfinity(c.lastPlayerSeen)
+                ? 1f
+                : Mathf.Clamp01(ageP / (debugMaxTime * 3));
+            Color colP = Color.Lerp(Color.magenta, Color.yellow, tP);
 
             // draw a small solid cube for VISITED
             Gizmos.color = colV;
             Gizmos.DrawCube(
                 c.worldCenter + Vector3.up * 0.1f,
-                Vector3.one * (cellSize * 0.4f)
+                Vector3.one * (cellSize * 0.3f)
             );
 
             // draw a wireframe cube for SEEN
@@ -147,6 +173,13 @@ public class NavMeshKnowledge : MonoBehaviour
             Gizmos.DrawWireCube(
                 c.worldCenter + Vector3.up * 0.05f,
                 Vector3.one * (cellSize * 0.9f)
+            );
+            
+            // draw a small solid cube for Player Seen
+            Gizmos.color = colP;
+            Gizmos.DrawCube(
+                c.worldCenter + Vector3.up * .5f,
+                Vector3.one * (cellSize * 0.2f)
             );
         }
     }
