@@ -2,83 +2,92 @@ using UnityEngine;
 
 public class ThirdPersonCam : MonoBehaviour
 {
-    [Header("Cursor Settings")]
-    public bool hideCursor = false;
+    [Header("Target")]
+    [Tooltip("Your Player GameObject’s root Transform")]
+    public Transform target;
 
-    [Header("Rotation Settings")]
-    public float rotationSpeed = 100f;
-    public float accelerationDuration = 1f;      // Time (in seconds) to ease from 0 → full speed
-    public AnimationCurve rotationEaseCurve;     // Curve should go from 0 to 1
+    [Header("Mouse Look")]
+    public float mouseSensitivity = 2f;
+    [Range(-89, 89)] public float minPitch = -30f;
+    [Range(-89, 89)] public float maxPitch = 60f;
+    private float yaw;
+    private float pitch;
 
-    [Header("References")]
-    public Transform orientation;
-    public Transform player;
-    public Transform playerObj;
-    public Rigidbody playerRB;
+    [Header("Shoulder Offsets")]
+    public Vector3 shoulderOffsetLeft  = new Vector3(0.5f, 1.7f, -2.5f);
+    public Vector3 shoulderOffsetRight = new Vector3(-0.5f, 1.7f, -2.5f);
+    private bool rightShoulder = false;
 
-    private float accelTimer = 0f;
+    [Header("Smoothing & Collision")]
+    [Tooltip("Time for camera to catch up")]
+    public float followSmoothTime = 0.1f;
+    public float collisionRadius   = 0.2f;
+    public LayerMask obstacleMask;
+    private Vector3 smoothVel;
+    private Vector3 currentOffset;
 
-    private void Start()
+    void Start()
     {
-        // Cursor setup
-        if (hideCursor)
+        if (target == null)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            var pm = FindObjectOfType<PlayerMovement>();
+            if (pm) target = pm.transform;
+            if (target == null) Debug.LogError("[ThirdPersonCam] target not assigned!");
         }
 
-        // If no curve assigned in Inspector, fall back to a default ease-in-out
-        if (rotationEaseCurve == null || rotationEaseCurve.length == 0)
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible   = false;
+
+        yaw   = transform.eulerAngles.y;
+        pitch = transform.eulerAngles.x;
+        currentOffset = shoulderOffsetLeft;
+    }
+
+    void Update()
+    {
+        // shoulder swap
+        if (Input.GetKeyDown(KeyCode.V))
+            rightShoulder = !rightShoulder;
+
+        currentOffset = rightShoulder ? shoulderOffsetRight : shoulderOffsetLeft;
+
+        // mouse look
+        yaw   += Input.GetAxis("Mouse X") * mouseSensitivity;
+        pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        pitch  = Mathf.Clamp(pitch, minPitch, maxPitch);
+
+        // toggle cursor
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            rotationEaseCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked
+                                ? CursorLockMode.None
+                                : CursorLockMode.Locked;
+            Cursor.visible = Cursor.lockState != CursorLockMode.Locked;
         }
     }
 
-    private void Update()
+    void LateUpdate()
     {
-        // Toggle cursor lock/unlock
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // build camera rotation
+        Quaternion camRot = Quaternion.Euler(pitch, yaw, 0);
+
+        // desired world position before collision
+        Vector3 desiredPos = target.position + camRot * currentOffset;
+
+        // sphere-cast to avoid clipping
+        Vector3 origin = target.position + Vector3.up * currentOffset.y;
+        Vector3 dir    = (desiredPos - origin).normalized;
+        float   dist   = Vector3.Distance(origin, desiredPos);
+
+        if (Physics.SphereCast(origin, collisionRadius, dir, out RaycastHit hit, dist, obstacleMask))
         {
-            hideCursor = !hideCursor;
-            Cursor.lockState = hideCursor ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible   = !hideCursor;
+            desiredPos = hit.point + hit.normal * collisionRadius;
         }
 
-        // Ensure references are set
-        if (player == null || playerObj == null || orientation == null)
-        {
-            Debug.LogError("ThirdPersonCam: Missing required references.");
-            enabled = false;
-            return;
-        }
+        // smooth follow
+        transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref smoothVel, followSmoothTime);
 
-        // Gather input
-        float horizInput = Input.GetAxis("Horizontal");
-        float vertInput  = Input.GetAxis("Vertical");
-        Vector3 inputDir = orientation.forward * vertInput + orientation.right * horizInput;
-
-        if (inputDir.sqrMagnitude > 0.0001f)
-        {
-            // 1) Ramp up our timer until it hits accelerationDuration
-            accelTimer = Mathf.Min(accelTimer + Time.deltaTime, accelerationDuration);
-
-            // 2) Normalize (0 → 1), evaluate curve, compute actual speed
-            float t                   = accelTimer / accelerationDuration;
-            float easedFactor         = rotationEaseCurve.Evaluate(t);
-            float adjustedRotationSpeed = rotationSpeed * easedFactor;
-
-            // 3) Smoothly rotate playerObj toward input direction
-            Vector3 targetDir = inputDir.normalized;
-            playerObj.forward = Vector3.Slerp(
-                playerObj.forward,
-                targetDir,
-                Time.deltaTime * adjustedRotationSpeed
-            );
-        }
-        else
-        {
-            // Reset so we ease again next time movement starts
-            accelTimer = 0f;
-        }
+        // apply rotation
+        transform.rotation = camRot;
     }
 }

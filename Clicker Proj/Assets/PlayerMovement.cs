@@ -1,121 +1,122 @@
-using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    public float movementModEffectSpeed = 10f;
-    public bool crouched;
-    [Range(0,1)]
-    public float crouchSpeedMod = .5f;
-    public bool sprinting;
-    [Range(1,3)]
-    public float sprintSpeedMod = 2f;
-    [Header("Movement Settings")]
-    [SerializeField] private float baseMoveSpeed = 10f;
-    [SerializeField] private float desiredMoveSpeed;
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float accelerationDuration = 1f;      // Time (in seconds) to ease from 0 → full speed
-    [SerializeField] private AnimationCurve movementEaseCurve;     // Curve should go from 0 → 1
+    public bool isCrouching = false;
+    [Header("Speeds")]
+    public float walkSpeed   = 3f;
+    public float runSpeed    = 5.5f;
+    public float crouchSpeed = 2f;
+
+    [Header("Acceleration")]
+    public float accelRate = 20f;
+    public float decelRate = 20f;
+
+    [Header("Rotation Smoothing")]
+    [Tooltip("Higher = slower turn")]
+    public float turnSmoothTime = 0.3f;
+    private float turnSmoothVel;
 
     [Header("References")]
-    [SerializeField] private Transform Orientation;
-
-    public Vector3 moveDirection;
+    [Tooltip("Your camera pivot—used to orient movement")]
+    public Transform orientation;
     private Rigidbody rb;
-    private float accelTimer = 0f;
-    
     private playerStealth stealth;
 
-    private void Start()
+    float currentSpeed;
+    Vector3 inputDir;
+
+    [Header("Ground Check")]
+    [Tooltip("Half-height + a little extra")]
+    public float groundCheckDistance = 1.1f;
+    public LayerMask groundMask = ~0;
+
+    void Start()
     {
-        stealth = GetComponent<playerStealth>();
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-        if (Orientation == null)
-            Debug.LogError("PlayerMovement: Orientation is not assigned!");
+        stealth = GetComponent<playerStealth>();
 
-        // Fallback ease-in-out curve if none assigned
-        if (movementEaseCurve == null || movementEaseCurve.length == 0)
-            movementEaseCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-    }
-
-    private void Update()
-    {
-        if(Input.GetKey(KeyCode.LeftShift)) sprinting = true;
-        else sprinting = false;
-        if(Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.C))
+        if (orientation == null)
         {
-            crouched = !crouched;
-            stealth.sneaking = crouched;
-        }
-        UpdateSprinting();
-        HandleInput();
-        SpeedControl();
-        moveSpeed = Mathf.Lerp(moveSpeed, desiredMoveSpeed, Time.deltaTime * movementModEffectSpeed);
-        
-    }
-
-    void UpdateSprinting()
-    {
-        if(sprinting) desiredMoveSpeed = baseMoveSpeed * sprintSpeedMod;
-        else desiredMoveSpeed = baseMoveSpeed;
-        UpdateCrouching();
-    }
-    void UpdateCrouching()
-    {
-        if(crouched)
-        {
-            desiredMoveSpeed *= crouchSpeedMod;
-            
-        }
-    }
-    
-    
-
-    void SpeedControl()
-    {
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-    }
-
-    private void FixedUpdate()
-    {
-        if (moveDirection.sqrMagnitude > 0.0001f && IsGrounded())
-        {
-            // 1) Ramp timer up to accelerationDuration
-            accelTimer = Mathf.Min(accelTimer + Time.fixedDeltaTime, accelerationDuration);
-
-            // 2) Compute eased factor (0 → 1)
-            float t           = accelTimer / accelerationDuration;
-            float easedFactor = movementEaseCurve.Evaluate(t);
-
-            // 3) Apply movement force scaled by easedFactor
-            rb.AddForce(moveDirection * moveSpeed * easedFactor * 10f, ForceMode.Force);
-
-            // 4) Clamp horizontal velocity to moveSpeed
-            Vector3 horizVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            if (horizVel.magnitude > moveSpeed)
+            if (Camera.main != null)
             {
-                horizVel = horizVel.normalized * moveSpeed;
-                rb.linearVelocity = new Vector3(horizVel.x, rb.linearVelocity.y, horizVel.z);
+                orientation = Camera.main.transform;
+                Debug.LogWarning("[PlayerMovement] orientation was null—defaulting to MainCamera.");
             }
+            else Debug.LogError("[PlayerMovement] orientation is not assigned!");
         }
-        else
+    }
+
+    
+
+    void Update()
+    {
+        // 1) read movement input
+        Vector2 raw = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        inputDir    = raw.normalized;
+
+        // 2) toggle crouch on key-down
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.C))
         {
-            // Reset so it eases again next time you start moving
-            accelTimer = 0f;
+            isCrouching = !isCrouching;
         }
+        stealth.sneaking = isCrouching;
+
+        // 3) decide target speed
+        bool sprint = Input.GetKey(KeyCode.LeftShift);
+        float target = isCrouching    ? crouchSpeed
+            : sprint          ? runSpeed
+            :                   walkSpeed;
+        target *= inputDir.magnitude;
+
+        // 4) smooth accel/decel
+        float rate = (currentSpeed < target) ? accelRate : decelRate;
+        currentSpeed = Mathf.MoveTowards(currentSpeed, target, rate * Time.deltaTime);
     }
 
-    private void HandleInput()
+    void FixedUpdate()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        moveDirection = (Orientation.forward * v + Orientation.right * h).normalized;
+        // only move if grounded
+        if (!IsGrounded()) return;
+
+        if (inputDir.sqrMagnitude < 0.01f) return;
+
+        // build movement vector relative to camera
+        Vector3 moveDir = orientation.forward * inputDir.y
+                        + orientation.right   * inputDir.x;
+        moveDir.y = 0f;
+
+        // apply instantaneous velocity change
+        Vector3 desiredVel = moveDir.normalized * currentSpeed;
+        Vector3 flatVel    = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        Vector3 deltaV     = desiredVel - flatVel;
+        rb.AddForce(deltaV, ForceMode.VelocityChange);
+
+        // smooth turn toward movement direction
+        float targetYaw = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
+        float yaw       = Mathf.SmoothDampAngle(
+                              transform.eulerAngles.y,
+                              targetYaw,
+                              ref turnSmoothVel,
+                              turnSmoothTime
+                          );
+        transform.rotation = Quaternion.Euler(0, yaw, 0);
     }
 
-    private bool IsGrounded()
+    bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 2f);
+        Vector3 origin = transform.position;
+        bool grounded = Physics.Raycast(
+            origin,
+            Vector3.down,
+            out RaycastHit hit,
+            groundCheckDistance,
+            groundMask
+        );
+        Debug.DrawRay(origin, Vector3.down * groundCheckDistance, grounded ? Color.green : Color.red);
+        return grounded;
     }
 }

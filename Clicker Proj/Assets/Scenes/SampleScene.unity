@@ -195,41 +195,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ccf4110303b39b4ba8396348324e44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementModEffectSpeed: 5
-  crouched: 0
-  crouchSpeedMod: 0.5
-  sprinting: 0
-  sprintSpeedMod: 1.5
-  baseMoveSpeed: 2
-  desiredMoveSpeed: 0
-  moveSpeed: 3
-  accelerationDuration: 2
-  movementEaseCurve:
+  isCrouching: 0
+  walkSpeed: 3
+  runSpeed: 5.5
+  crouchSpeed: 1
+  accelRate: 20
+  decelRate: 20
+  turnSmoothTime: 0.35
+  orientation: {fileID: 1976467129}
+  groundCheckDistance: 1.1
+  groundMask:
     serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0.3466797
-      inSlope: 0.29906607
-      outSlope: 0.29906607
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.08147052
-    - serializedVersion: 3
-      time: 1
-      value: 0.9946461
-      inSlope: 0.08026163
-      outSlope: 0.08026163
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.07987201
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  Orientation: {fileID: 1976467129}
-  moveDirection: {x: 0, y: 0, z: 0}
+    m_Bits: 55
 --- !u!114 &44806833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2343,37 +2320,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d2e10ac94833da4886d543800014bd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hideCursor: 1
-  rotationSpeed: 1.5
-  accelerationDuration: 2
-  rotationEaseCurve:
+  target: {fileID: 44806829}
+  mouseSensitivity: 2
+  minPitch: -30
+  maxPitch: 60
+  shoulderOffsetLeft: {x: 0.5, y: 1.7, z: -2.5}
+  shoulderOffsetRight: {x: -0.5, y: 1.7, z: -2.5}
+  followSmoothTime: 0.1
+  collisionRadius: 0.2
+  obstacleMask:
     serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0.13653564
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  orientation: {fileID: 1976467129}
-  player: {fileID: 44806829}
-  playerObj: {fileID: 649396646}
-  playerRB: {fileID: 44806831}
+    m_Bits: 183
 --- !u!1 &1699849186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2720,7 +2677,7 @@ Transform:
   m_GameObject: {fileID: 2073355294}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29.2, y: 0.98, z: 26.19}
+  m_LocalPosition: {x: 29.91, y: 0.98, z: 21.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
